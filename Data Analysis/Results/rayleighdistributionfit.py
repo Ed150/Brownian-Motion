@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     n = 100
 
-    freq, bin_edges = np.histogram(step_sizes, bins=n)
+    freq, bin_edges = np.histogram(step_sizes, bins=n, density=True)
     bins = (bin_edges[:-1] + bin_edges[1:])/2
 
     dt = 0.5
@@ -56,6 +56,7 @@ if __name__ == "__main__":
     D_fit = y[0]
     r_fit = np.linspace(0, max(step_sizes), n)
     rayleigh_fit = rayleigh(r_fit, dt, D_fit)
+    print(D_fit)
 
     plt.hist(step_sizes, bins=n, density=True)
     plt.plot(r_fit, rayleigh_fit, label="Rayleigh Curve Fit")
