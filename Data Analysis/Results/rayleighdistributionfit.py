@@ -1,5 +1,6 @@
 from scipy import stats
 from scipy.optimize import curve_fit
+from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -11,11 +12,13 @@ def rayleigh(r, t, D):
     return (r / (2 * D * t)) * (np.exp((-r**2)/(4 * D * t)))
 
 if __name__ == "__main__":
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent #pulls the local repository path automatically from computer assuming this file is 2 sub-folders deep
+
     px = 0.12048
     dpx = 0.003
     step_sizes = np.array([])
     for i in range(1, 24):
-        df = pd.read_table(f"C:/Users/eddyq/GitHub/Brownian-Motion/Raw_Data/Position_Data/data{i}.txt", header=1)
+        df = pd.read_table(PROJECT_ROOT / f"Raw_Data/Position_Data/data{i}.txt", header=1)
         df.columns = df.columns.str.strip()
         x = df['X (pixels)'].to_numpy()
         y = df['Y (pixels)'].to_numpy()
@@ -23,10 +26,10 @@ if __name__ == "__main__":
         y1 = y[1:]
         x1 = np.append(x1, 0)
         y1 = np.append(y1, 0)
-        x *= px
-        y *= px
-        x1 *= px
-        y1 *= px
+        x = x*px
+        y = y*px
+        x1 = x1*px
+        y1 = y1*px
         distances = distance(x, y, x1, y1)
         step_sizes = np.append(step_sizes, distances[:-1])
 
@@ -56,7 +59,7 @@ if __name__ == "__main__":
     D_fit = y[0]
     r_fit = np.linspace(0, max(step_sizes), n)
     rayleigh_fit = rayleigh(r_fit, dt, D_fit)
-    print(D_fit)
+    print("D fit from curve:", D_fit)
 
     plt.hist(step_sizes, bins=n, density=True)
     plt.plot(r_fit, rayleigh_fit, label="Rayleigh Curve Fit")
